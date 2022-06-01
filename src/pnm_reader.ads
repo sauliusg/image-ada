@@ -19,6 +19,8 @@ package PNM_Reader is
       Raster : Access_Raster;
    end record;
    
+   function Get_Raster (R : Raster_Type) return Pixel_Raster_Type16;
+   
 private
    
    procedure Initialize(Img : in out PNM_Image_Type);
