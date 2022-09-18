@@ -32,4 +32,10 @@ package body PNM_Reader is
       return R.Raster;
    end;
    
+   procedure Load_Raster (F : in File_Type; R : out PNM_Image_Type ) is
+      PNM_Signature : String := Get_Line (F);
+   begin
+      null;
+   end;
+
 end PNM_Reader;
