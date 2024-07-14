@@ -65,8 +65,20 @@ package body PNM_Reader is
             end if;
          end;
       end loop;
+      
       Put_Line (">>> W =" & W'Image);
       Put_Line (">>> H =" & H'Image);
+      
+      if Format = P2_FORMAT or else Format = P5_FORMAT then
+         declare
+            Line : String := Get_Line (File);
+            Dummy : Natural;
+         begin
+            Get (Line, Max_Val, Dummy);
+         end;
+      end if;
+      
+      Put_Line (">>> Max_Val =" & Max_Val'Image);
    end;
 
    

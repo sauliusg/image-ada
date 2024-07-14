@@ -43,11 +43,18 @@ begin
    end;
    
    if Argument_Count > 0 then
+      New_Line;
+   end if;
+   
+   for I in 1 .. Argument_Count loop
       declare
          Image : PNM_Image_Type;
       begin
-         Load_Raster (Argument (1), Image);
+         Load_Raster (Argument (I), Image);
       end;
-   end if;
+      if I < Argument_Count then
+         New_Line;
+      end if;
+   end loop;
    
 end PNMRead;
