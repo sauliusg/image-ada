@@ -30,6 +30,8 @@ package PNM_Reader is
    type Access_Raster is access Raster_Type;
    
    type PNM_Image_Type is new Controlled with record
+      Format : PNM_Format_Type;
+      MaxVal : Natural;
       Raster : Access_Raster;
    end record;
    

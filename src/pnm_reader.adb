@@ -62,11 +62,9 @@ package body PNM_Reader is
          for J in R.Raster.Raster'Range (2) loop
             Character'Read (Input, Char1);
             Value := Character'Pos (Char1);
-            Put_Line (">>> Value = " & Value'Image);
             if Max_Val > 255 then
                Character'Read (Input, Char2);
                Value := Value * 256 + Character'Pos (Char2);
-               Put_Line (">>> Value = " & Value'Image);
             end if;
             R.Raster.Raster (I, J) := Pixel_Type (Value);
          end loop;
@@ -103,19 +101,15 @@ package body PNM_Reader is
             Pos : Natural := 0;
          begin
             if Line'Length > 1 and then Line (1) /= '#' then
-               Put_Line (">>> Pos =" & Pos'Image);
                Get (Line (Pos + 1 .. Line'Last), W, Pos);
-               Put_Line (">>> Pos =" & Pos'Image);
                Get (Line (Pos + 1 .. Line'Last), H, Pos);
-               Put_Line (">>> Pos =" & Pos'Image);
                exit;
             end if;
          end;
       end loop;
       
-      Put_Line (">>> W =" & W'Image);
-      Put_Line (">>> H =" & H'Image);
-      
+      -- For grayscale formats (P2 or P5), as opposed to single bit
+      -- maps (P1 or P4), a maximum pixel value is also given:
       if Format = P2_FORMAT or else Format = P5_FORMAT then
          declare
             Line : String := Get_Line (File);
@@ -125,9 +119,9 @@ package body PNM_Reader is
          end;
       end if;
       
-      Put_Line (">>> Max_Val =" & Max_Val'Image);
-      
       R.Raster := new Raster_Type (H, W);
+      R.Format := Format;
+      R.MaxVal := Max_Val;
       
       -- load the raster:
       if Format = P1_FORMAT or else Format = P2_FORMAT then
@@ -138,17 +132,8 @@ package body PNM_Reader is
          raise FORMAT_ERROR with
            "format '" & Format'Image & "' is not yet supported";
       end if;
-      
-      for I in R.Raster.Raster'Range (1) loop
-         for J in R.Raster.Raster'Range (2) loop
-            Put (Integer (R.Raster.Raster (I, J)), 4);
-         end loop;
-         New_Line;
-      end loop;
-      
    end;
 
-   
    procedure Load_Raster (File : in File_Type; R : out PNM_Image_Type) is
       PNM_Signature : String := Get_Line (File);
       PNM_Format : PNM_Format_Type := Get_Image_Format (PNM_Signature);
@@ -160,8 +145,6 @@ package body PNM_Reader is
             raise FORMAT_ERROR with
               "unrecognised format " & PNM_Format'Image;
       end case;
-      
-      Put_Line (">>> " & PNM_Format'Image);
    end;
    
    function Get_Image_Format (Magic : String) return PNM_Format_Type
