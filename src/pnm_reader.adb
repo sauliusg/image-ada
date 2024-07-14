@@ -1,4 +1,5 @@
-with Text_IO;   use Text_IO;
+with Ada.Text_IO;         use Ada.Text_IO;
+with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
 with Ada.Unchecked_Deallocation;
 
@@ -39,11 +40,48 @@ package body PNM_Reader is
       Load_Raster (File, R);
       Close (File);
    end;
+   
+   procedure Read_Grayscale_Raster
+     (
+      File : in File_Type;
+      Format : in PNM_Format_Type;
+      R : out PNM_Image_Type
+     ) is
+      W, H : Positive;
+      Max_Val : Positive := 1;
+   begin
+      while not End_Of_File (File) loop
+         declare
+            Line : String := Get_Line (File);
+            Pos : Natural := 0;
+         begin
+            if Line'Length > 1 and then Line (1) /= '#' then
+               Put_Line (">>> Pos =" & Pos'Image);
+               Get (Line (Pos + 1 .. Line'Last), W, Pos);
+               Put_Line (">>> Pos =" & Pos'Image);
+               Get (Line (Pos + 1 .. Line'Last), H, Pos);
+               Put_Line (">>> Pos =" & Pos'Image);
+               exit;
+            end if;
+         end;
+      end loop;
+      Put_Line (">>> W =" & W'Image);
+      Put_Line (">>> H =" & H'Image);
+   end;
 
+   
    procedure Load_Raster (File : in File_Type; R : out PNM_Image_Type) is
       PNM_Signature : String := Get_Line (File);
       PNM_Format : PNM_Format_Type := Get_Image_Format (PNM_Signature);
    begin
+      case PNM_Format is
+         when P1_FORMAT | P2_FORMAT =>
+            Read_Grayscale_Raster (File, PNM_Format, R);
+         when others =>
+            raise FORMAT_ERROR with
+              "unrecognised format " & PNM_Format'Image;
+      end case;
+      
       Put_Line (">>> " & PNM_Format'Image);
    end;
    

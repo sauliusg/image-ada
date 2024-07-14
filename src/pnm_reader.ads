@@ -20,6 +20,8 @@ package PNM_Reader is
       P6_FORMAT  -- ppm image, magic number "P6", 1 or 2 bytes/color, maxval 65536, bin
      );
    
+   FORMAT_ERROR : exception;
+   
    type Raster_Type (N, M : Natural) is record
       Ref_Count : Natural;
       Raster : Pixel_Raster_Type (1..N, 1..M);
