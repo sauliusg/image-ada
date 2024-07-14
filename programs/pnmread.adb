@@ -1,6 +1,7 @@
 with Text_IO;             use Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Command_Line;    use Ada.Command_Line;
+with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
 with PNM_Reader;
 
@@ -18,6 +19,8 @@ begin
    for I in 1 .. Argument_Count loop
       declare
          Image : PNM_Image_Type;
+         Log_Max : Float;
+         N_Digits : Integer;
       begin
          Load_Raster (Argument (I), Image);
          Put_Line (Image.Format'Image (1 .. 2));
@@ -29,9 +32,14 @@ begin
             Put (Image.MaxVal, 0);
             New_Line;
          end if;
+         
+         Log_Max := Log (Float (Image.MaxVal), Base => 10.0);
+         N_Digits := Integer (Log_Max) + 1;
+         -- Put_Line (">>> " & N_Digits'Image);
+
          for I in Image.Raster.Raster'Range (1) loop
             for J in Image.Raster.Raster'Range (2) loop
-               Put (Integer (Image.Raster.Raster (I, J)), 4);
+               Put (Integer (Image.Raster.Raster (I, J)), N_Digits + 1);
             end loop;
             New_Line;
          end loop;
