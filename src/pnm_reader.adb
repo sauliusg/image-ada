@@ -1,5 +1,3 @@
-pragma Ada_2022;
-
 with Ada.Text_IO;         use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
@@ -48,6 +46,48 @@ package body PNM_Reader is
       Close (File);
    end;
    
+   procedure PNM_Read_Grayscale_Binary_Raster
+     (
+      File : in File_Type;
+      Max_Val : in Integer;
+      R : in out PNM_Image_Type
+     ) is
+      -- https://stackoverflow.com/questions/62348509/ada-program-to-detect-an-end-of-line:
+      Input : Stream_Access := Stream (File);
+      Value : Integer;
+      Char1 : Character;
+      Char2 : Character;
+   begin
+      for I in R.Raster.Raster'Range (1) loop
+         for J in R.Raster.Raster'Range (2) loop
+            Character'Read (Input, Char1);
+            Value := Character'Pos (Char1);
+            Put_Line (">>> Value = " & Value'Image);
+            if Max_Val > 255 then
+               Character'Read (Input, Char2);
+               Value := Value * 256 + Character'Pos (Char2);
+               Put_Line (">>> Value = " & Value'Image);
+            end if;
+            R.Raster.Raster (I, J) := Pixel_Type (Value);
+         end loop;
+      end loop;
+   end;         
+   
+   procedure PNM_Read_Grayscale_ASCII_Raster
+     (
+      File : in File_Type;
+      R : in out PNM_Image_Type
+     ) is
+      Value : Integer;
+   begin
+      for I in R.Raster.Raster'Range (1) loop
+         for J in R.Raster.Raster'Range (2) loop
+            Get (File, Value);
+            R.Raster.Raster (I, J) := Pixel_Type (Value);
+         end loop;
+      end loop;
+   end;
+   
    procedure Read_Grayscale_Raster
      (
       File : in File_Type;
@@ -91,38 +131,9 @@ package body PNM_Reader is
       
       -- load the raster:
       if Format = P1_FORMAT or else Format = P2_FORMAT then
-         declare
-            Value : Integer;
-         begin
-            for I in R.Raster.Raster'Range (1) loop
-               for J in R.Raster.Raster'Range (2) loop
-                  Get (File, Value);
-                  R.Raster.Raster (I, J) := Pixel_Type (Value);
-               end loop;
-            end loop;
-         end;
+         PNM_Read_Grayscale_ASCII_Raster (File, R);
       elsif Format = P5_FORMAT then
-         declare
-            -- https://stackoverflow.com/questions/62348509/ada-program-to-detect-an-end-of-line:
-            Input : Stream_Access := Stream (File);
-            Value : Integer;
-            Char1 : Character;
-            Char2 : Character;
-         begin
-            for I in R.Raster.Raster'Range (1) loop
-               for J in R.Raster.Raster'Range (2) loop
-                  Character'Read (Input, Char1);
-                  Value := Character'Pos (Char1);
-                  Put_Line (">>> Value = " & Value'Image);
-                  if Max_Val > 255 then
-                     Character'Read (Input, Char2);
-                     Value := Value * 256 + Character'Pos (Char2);
-                     Put_Line (">>> Value = " & Value'Image);
-                  end if;
-                  R.Raster.Raster (I, J) := Pixel_Type (Value);
-               end loop;
-            end loop;
-         end;         
+         PNM_Read_Grayscale_Binary_Raster (File, Max_Val, R);
       else
          raise FORMAT_ERROR with
            "format '" & Format'Image & "' is not yet supported";
