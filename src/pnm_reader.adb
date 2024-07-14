@@ -25,7 +25,9 @@ package body PNM_Reader is
    
    procedure Adjust (Img : in out PNM_Image_Type) is
    begin
-      Img.Raster.Ref_Count := Img.Raster.Ref_Count + 1;
+      if Img.Raster /= null then
+         Img.Raster.Ref_Count := Img.Raster.Ref_Count + 1;
+      end if;
    end;
    
    function Get_Raster (R : Raster_Type) return Pixel_Raster_Type is
