@@ -1,9 +1,16 @@
 with Text_IO;             use Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
-with PNM_Reader;  use PNM_Reader;
+with PNM_Reader;
 
 procedure PNMRead is
+   
+   type Pixel_Type16 is mod 2**16;
+   
+   package PNM_Reader16 is new PNM_Reader (Pixel_Type16);
+   use PNM_Reader16;
+   
+   subtype Pixel_Raster_Type16 is PNM_Reader16.Pixel_Raster_Type;
    
 begin
    

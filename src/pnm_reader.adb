@@ -27,7 +27,7 @@ package body PNM_Reader is
       Img.Raster.Ref_Count := Img.Raster.Ref_Count + 1;
    end;
    
-   function Get_Raster (R : Raster_Type) return Pixel_Raster_Type16 is
+   function Get_Raster (R : Raster_Type) return Pixel_Raster_Type is
    begin
       return R.Raster;
    end;
