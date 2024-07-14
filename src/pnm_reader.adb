@@ -3,6 +3,9 @@ pragma Ada_2022;
 with Ada.Text_IO;         use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
+-- https://stackoverflow.com/questions/62348509/ada-program-to-detect-an-end-of-line
+with Ada.Text_IO.Text_Streams; use Ada.Text_IO.Text_Streams;
+
 with Ada.Unchecked_Deallocation;
 
 package body PNM_Reader is
@@ -87,16 +90,43 @@ package body PNM_Reader is
       R.Raster := new Raster_Type (H, W);
       
       -- load the raster:
-      declare
-         Value : Integer;
-      begin
-         for I in R.Raster.Raster'Range (1) loop
-            for J in R.Raster.Raster'Range (2) loop
-               Get (File, Value);
-               R.Raster.Raster (I, J) := Pixel_Type (Value);
+      if Format = P1_FORMAT or else Format = P2_FORMAT then
+         declare
+            Value : Integer;
+         begin
+            for I in R.Raster.Raster'Range (1) loop
+               for J in R.Raster.Raster'Range (2) loop
+                  Get (File, Value);
+                  R.Raster.Raster (I, J) := Pixel_Type (Value);
+               end loop;
             end loop;
-         end loop;
-      end;
+         end;
+      elsif Format = P5_FORMAT then
+         declare
+            -- https://stackoverflow.com/questions/62348509/ada-program-to-detect-an-end-of-line:
+            Input : Stream_Access := Stream (File);
+            Value : Integer;
+            Char1 : Character;
+            Char2 : Character;
+         begin
+            for I in R.Raster.Raster'Range (1) loop
+               for J in R.Raster.Raster'Range (2) loop
+                  Character'Read (Input, Char1);
+                  Value := Character'Pos (Char1);
+                  Put_Line (">>> Value = " & Value'Image);
+                  if Max_Val > 255 then
+                     Character'Read (Input, Char2);
+                     Value := Value * 256 + Character'Pos (Char2);
+                     Put_Line (">>> Value = " & Value'Image);
+                  end if;
+                  R.Raster.Raster (I, J) := Pixel_Type (Value);
+               end loop;
+            end loop;
+         end;         
+      else
+         raise FORMAT_ERROR with
+           "format '" & Format'Image & "' is not yet supported";
+      end if;
       
       for I in R.Raster.Raster'Range (1) loop
          for J in R.Raster.Raster'Range (2) loop
@@ -113,7 +143,7 @@ package body PNM_Reader is
       PNM_Format : PNM_Format_Type := Get_Image_Format (PNM_Signature);
    begin
       case PNM_Format is
-         when P1_FORMAT | P2_FORMAT =>
+         when P1_FORMAT | P2_FORMAT | P5_FORMAT =>
             Read_Grayscale_Raster (File, PNM_Format, R);
          when others =>
             raise FORMAT_ERROR with
