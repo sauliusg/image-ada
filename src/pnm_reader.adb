@@ -32,10 +32,19 @@ package body PNM_Reader is
       return R.Raster;
    end;
    
-   procedure Load_Raster (F : in File_Type; R : out PNM_Image_Type ) is
-      PNM_Signature : String := Get_Line (F);
+   procedure Load_Raster (Name : in String; R : out PNM_Image_Type) is
+      File : File_Type;
    begin
-      null;
+      Open (File, In_File, Name);
+      Load_Raster (File, R);
+      Close (File);
+   end;
+
+   procedure Load_Raster (File : in File_Type; R : out PNM_Image_Type) is
+      PNM_Signature : String := Get_Line (File);
+      PNM_Format : PNM_Format_Type := Get_Image_Format (PNM_Signature);
+   begin
+      Put_Line (">>> " & PNM_Format'Image);
    end;
    
    function Get_Image_Format (Magic : String) return PNM_Format_Type

@@ -33,7 +33,9 @@ package PNM_Reader is
    
    function Get_Raster (R : Raster_Type) return Pixel_Raster_Type;
    
-   procedure Load_Raster (F : File_Type; R : out PNM_Image_Type );
+   procedure Load_Raster (Name : String; R : out PNM_Image_Type);
+   
+   procedure Load_Raster (File : File_Type; R : out PNM_Image_Type);
    
    function Get_Image_Format (Magic : String) return PNM_Format_Type;
    

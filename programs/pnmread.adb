@@ -1,5 +1,6 @@
 with Text_IO;             use Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+with Ada.Command_Line;    use Ada.Command_Line;
 
 with PNM_Reader;
 
@@ -40,5 +41,13 @@ begin
          New_Line;
       end;
    end;
+   
+   if Argument_Count > 0 then
+      declare
+         Image : PNM_Image_Type;
+      begin
+         Load_Raster (Argument (1), Image);
+      end;
+   end if;
    
 end PNMRead;
