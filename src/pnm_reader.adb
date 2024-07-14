@@ -1,3 +1,5 @@
+pragma Ada_2022;
+
 with Ada.Text_IO;         use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
@@ -81,6 +83,28 @@ package body PNM_Reader is
       end if;
       
       Put_Line (">>> Max_Val =" & Max_Val'Image);
+      
+      R.Raster := new Raster_Type (H, W);
+      
+      -- load the raster:
+      declare
+         Value : Integer;
+      begin
+         for I in R.Raster.Raster'Range (1) loop
+            for J in R.Raster.Raster'Range (2) loop
+               Get (File, Value);
+               R.Raster.Raster (I, J) := Pixel_Type (Value);
+            end loop;
+         end loop;
+      end;
+      
+      for I in R.Raster.Raster'Range (1) loop
+         for J in R.Raster.Raster'Range (2) loop
+            Put (Integer (R.Raster.Raster (I, J)), 4);
+         end loop;
+         New_Line;
+      end loop;
+      
    end;
 
    

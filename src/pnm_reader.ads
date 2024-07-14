@@ -23,7 +23,7 @@ package PNM_Reader is
    FORMAT_ERROR : exception;
    
    type Raster_Type (N, M : Natural) is record
-      Ref_Count : Natural;
+      Ref_Count : Natural := 1;
       Raster : Pixel_Raster_Type (1..N, 1..M);
    end record;
    
