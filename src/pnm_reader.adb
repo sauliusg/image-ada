@@ -37,5 +37,26 @@ package body PNM_Reader is
    begin
       null;
    end;
+   
+   function Get_Image_Format (Magic : String) return PNM_Format_Type
+   is
+   begin
+      pragma Assert (Magic'Length = 2);
+      if Magic = "P1" then
+         return P1_FORMAT;
+      elsif Magic = "P2" then
+         return P2_FORMAT;
+      elsif Magic = "P3" then
+         return P3_FORMAT;
+      elsif Magic = "P4" then
+         return P4_FORMAT;
+      elsif Magic = "P5" then
+         return P5_FORMAT;
+      elsif Magic = "P6" then
+         return P6_FORMAT;
+      else
+         return UNKNOWN;
+      end if;
+   end;
 
 end PNM_Reader;
