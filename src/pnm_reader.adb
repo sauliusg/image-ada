@@ -80,7 +80,27 @@ package body PNM_Reader is
             R.Raster.Pixels (I, J) := Pixel_Type (Value);
          end loop;
       end loop;
-   end;         
+   end;
+   
+   procedure PNM_Read_Color_Binary_Raster
+     (
+      File : in File_Type;
+      Max_Val : in Integer;
+      Image : in out PNM_Image_Type
+     ) is
+      -- https://stackoverflow.com/questions/62348509/ada-program-to-detect-an-end-of-line:
+      Input : Stream_Access := Stream (File);
+      R, G, B : Integer; -- Red, Green and Blue channels
+   begin
+      for I in Image.Raster.Pixels'Range (1) loop
+         for J in Image.Raster.Pixels'Range (2) loop
+            R := Get_Binary_Stream_Value (Input, Max_Val);
+            G := Get_Binary_Stream_Value (Input, Max_Val);
+            B := Get_Binary_Stream_Value (Input, Max_Val);
+            Image.Raster.Pixels (I, J) := Pixel_Type ((R + G + B) / 3);
+         end loop;
+      end loop;
+   end;
    
    procedure PNM_Read_Grayscale_ASCII_Raster
      (
@@ -93,6 +113,23 @@ package body PNM_Reader is
          for J in R.Raster.Pixels'Range (2) loop
             Get (File, Value);
             R.Raster.Pixels (I, J) := Pixel_Type (Value);
+         end loop;
+      end loop;
+   end;
+   
+   procedure PNM_Read_Color_ASCII_Raster
+     (
+      File : in File_Type;
+      Image : in out PNM_Image_Type
+     ) is
+      R, G, B : Integer; -- Red, Green and Blue channels
+   begin
+      for I in Image.Raster.Pixels'Range (1) loop
+         for J in Image.Raster.Pixels'Range (2) loop
+            Get (File, R);
+            Get (File, G);
+            Get (File, B);
+            Image.Raster.Pixels (I, J) := Pixel_Type ((R + G + B) / 3);
          end loop;
       end loop;
    end;
@@ -119,9 +156,9 @@ package body PNM_Reader is
          end;
       end loop;
       
-      -- For grayscale formats (P2 or P5), as opposed to single bit
-      -- maps (P1 or P4), a maximum pixel value is also given:
-      if Format = P2_FORMAT or else Format = P5_FORMAT then
+      -- For formats other than a single bit maps (P1 or P4), a
+      -- maximum pixel value is also given:
+      if Format /= P1_FORMAT and then Format /= P4_FORMAT then
          declare
             Line : String := Get_Line (File);
             Dummy : Natural;
@@ -137,8 +174,12 @@ package body PNM_Reader is
       -- load the raster:
       if Format = P1_FORMAT or else Format = P2_FORMAT then
          PNM_Read_Grayscale_ASCII_Raster (File, R);
+      elsif Format = P3_FORMAT then
+         PNM_Read_Color_ASCII_Raster (File, R);
       elsif Format = P5_FORMAT then
          PNM_Read_Grayscale_Binary_Raster (File, Max_Val, R);
+      elsif Format = P6_FORMAT then
+         PNM_Read_Color_Binary_Raster (File, Max_Val, R);
       else
          raise FORMAT_ERROR with
            "format '" & Format'Image & "' is not yet supported";
@@ -150,7 +191,9 @@ package body PNM_Reader is
       PNM_Format : PNM_Format_Type := Get_Image_Format (PNM_Signature);
    begin
       case PNM_Format is
-         when P1_FORMAT | P2_FORMAT | P5_FORMAT =>
+         when 
+           P1_FORMAT | P2_FORMAT | P3_FORMAT |
+           P4_FORMAT | P5_FORMAT | P6_FORMAT =>
             Read_Grayscale_Raster (File, PNM_Format, R);
          when others =>
             raise FORMAT_ERROR with
