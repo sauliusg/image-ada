@@ -1,7 +1,0 @@
-# 2024-07-16 12:28:06 EEST
-tests/outputs/pnmread_001.diff: bin/pnmread
-tests/outputs/pnmread_002.diff: bin/pnmread
-tests/outputs/pnmread_003.diff: bin/pnmread
-tests/outputs/pnmread_004.diff: bin/pnmread
-tests/outputs/pnmread_005.diff: bin/pnmread
-tests/outputs/pnmread_006.diff: bin/pnmread
