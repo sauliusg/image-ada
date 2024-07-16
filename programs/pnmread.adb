@@ -23,7 +23,15 @@ begin
          N_Digits : Integer;
       begin
          Load_Raster (Argument (I), Image);
-         Put_Line (Image.Format'Image (1 .. 2));
+         declare
+            Image_Format : PNM_Format_Type := Image.Format;
+         begin
+            if Image_Format in P4_FORMAT .. P6_FORMAT then
+               Image_Format :=
+                 PNM_Format_Type'Val (PNM_Format_Type'Pos (Image_Format) - 3);
+            end if;
+            Put_Line (Image_Format'Image (1 .. 2));
+         end;
          Put (Image.Raster.M, 0);
          Put (" ");
          Put (Image.Raster.N, 0);
