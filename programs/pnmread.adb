@@ -12,7 +12,7 @@ procedure PNMRead is
    package PNM_Reader16 is new PNM_Reader (Pixel_Type16);
    use PNM_Reader16;
    
-   subtype Pixel_Raster_Type16 is PNM_Reader16.Pixel_Raster_Type;
+   subtype Pixel_Array_Type16 is PNM_Reader16.Pixel_Array_Type;
    
 begin
    
@@ -37,9 +37,9 @@ begin
          N_Digits := Integer (Log_Max) + 1;
          -- Put_Line (">>> " & N_Digits'Image);
 
-         for I in Image.Raster.Raster'Range (1) loop
-            for J in Image.Raster.Raster'Range (2) loop
-               Put (Integer (Image.Raster.Raster (I, J)), N_Digits + 1);
+         for I in Image.Raster.Pixels'Range (1) loop
+            for J in Image.Raster.Pixels'Range (2) loop
+               Put (Integer (Image.Raster.Pixels (I, J)), N_Digits + 1);
             end loop;
             New_Line;
          end loop;

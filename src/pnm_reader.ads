@@ -6,7 +6,7 @@ generic
    
 package PNM_Reader is
    
-   type Pixel_Raster_Type is array (Natural range <>, Natural range <>)
+   type Pixel_Array_Type is array (Natural range <>, Natural range <>)
      of Pixel_Type;
    
    type PNM_Format_Type is
@@ -24,7 +24,7 @@ package PNM_Reader is
    
    type Raster_Type (N, M : Natural) is record
       Ref_Count : Natural := 1;
-      Raster : Pixel_Raster_Type (1..N, 1..M);
+      Pixels : Pixel_Array_Type (1..N, 1..M);
    end record;
    
    type Access_Raster is access Raster_Type;
@@ -35,7 +35,7 @@ package PNM_Reader is
       Raster : Access_Raster;
    end record;
    
-   function Get_Raster (R : Raster_Type) return Pixel_Raster_Type;
+   function Get_Raster (R : Raster_Type) return Pixel_Array_Type;
    
    procedure Load_Raster (Name : String; R : out PNM_Image_Type);
    

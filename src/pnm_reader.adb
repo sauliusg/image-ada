@@ -33,9 +33,9 @@ package body PNM_Reader is
       end if;
    end;
    
-   function Get_Raster (R : Raster_Type) return Pixel_Raster_Type is
+   function Get_Raster (R : Raster_Type) return Pixel_Array_Type is
    begin
-      return R.Raster;
+      return R.Pixels;
    end;
    
    procedure Load_Raster (Name : in String; R : out PNM_Image_Type) is
@@ -74,10 +74,10 @@ package body PNM_Reader is
       Input : Stream_Access := Stream (File);
       Value : Integer;
    begin
-      for I in R.Raster.Raster'Range (1) loop
-         for J in R.Raster.Raster'Range (2) loop
+      for I in R.Raster.Pixels'Range (1) loop
+         for J in R.Raster.Pixels'Range (2) loop
             Value := Get_Binary_Stream_Value (Input, Max_Val);
-            R.Raster.Raster (I, J) := Pixel_Type (Value);
+            R.Raster.Pixels (I, J) := Pixel_Type (Value);
          end loop;
       end loop;
    end;         
@@ -89,10 +89,10 @@ package body PNM_Reader is
      ) is
       Value : Integer;
    begin
-      for I in R.Raster.Raster'Range (1) loop
-         for J in R.Raster.Raster'Range (2) loop
+      for I in R.Raster.Pixels'Range (1) loop
+         for J in R.Raster.Pixels'Range (2) loop
             Get (File, Value);
-            R.Raster.Raster (I, J) := Pixel_Type (Value);
+            R.Raster.Pixels (I, J) := Pixel_Type (Value);
          end loop;
       end loop;
    end;
