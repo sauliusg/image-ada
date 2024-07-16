@@ -46,6 +46,24 @@ package body PNM_Reader is
       Close (File);
    end;
    
+   function Get_Binary_Stream_Value
+     (
+      Input : in Stream_Access;
+      Max_Val : in Integer
+     ) return Integer is
+      Value : Integer;
+      Char1 : Character;
+      Char2 : Character;
+   begin
+      Character'Read (Input, Char1);
+      Value := Character'Pos (Char1);
+      if Max_Val > 255 then
+         Character'Read (Input, Char2);
+         Value := Value * 256 + Character'Pos (Char2);
+      end if;
+      return Value;
+   end;
+   
    procedure PNM_Read_Grayscale_Binary_Raster
      (
       File : in File_Type;
@@ -55,17 +73,10 @@ package body PNM_Reader is
       -- https://stackoverflow.com/questions/62348509/ada-program-to-detect-an-end-of-line:
       Input : Stream_Access := Stream (File);
       Value : Integer;
-      Char1 : Character;
-      Char2 : Character;
    begin
       for I in R.Raster.Raster'Range (1) loop
          for J in R.Raster.Raster'Range (2) loop
-            Character'Read (Input, Char1);
-            Value := Character'Pos (Char1);
-            if Max_Val > 255 then
-               Character'Read (Input, Char2);
-               Value := Value * 256 + Character'Pos (Char2);
-            end if;
+            Value := Get_Binary_Stream_Value (Input, Max_Val);
             R.Raster.Raster (I, J) := Pixel_Type (Value);
          end loop;
       end loop;
