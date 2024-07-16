@@ -14,7 +14,7 @@ package PNM_Reader is
       UNKNOWN,
       P1_FORMAT, -- pbm image, magic number "P1", pixels 1 or 0, ASCII
       P2_FORMAT, -- pgm image, magic number "P2", integer grayscale pixels, ASCII
-      P3_FORMAT, -- ppm image, magic number "P6", 2 x interer pixels, ASCII
+      P3_FORMAT, -- ppm image, magic number "P3", 3 x interer pixels, ASCII
       P4_FORMAT, -- pbm image, magic number "P4", 1 bit per pixel, binary
       P5_FORMAT, -- pgm image, magic number "P5", 1 or 2 bytes, max. value 65536, binary
       P6_FORMAT  -- ppm image, magic number "P6", 1 or 2 bytes/color, maxval 65536, bin
