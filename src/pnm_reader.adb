@@ -102,6 +102,21 @@ package body PNM_Reader is
       end loop;
    end;
    
+   procedure PNM_Read_Bitmap_ASCII_Raster
+     (
+      File : in File_Type;
+      R : in out PNM_Image_Type
+     ) is
+      Value : Character;
+   begin
+      for I in R.Raster.Pixels'Range (1) loop
+         for J in R.Raster.Pixels'Range (2) loop
+            Get (File, Value);
+            R.Raster.Pixels (I, J) := (if Value = '0' then 0 else 1);
+         end loop;
+      end loop;
+   end;
+   
    procedure PNM_Read_Grayscale_ASCII_Raster
      (
       File : in File_Type;
@@ -172,7 +187,9 @@ package body PNM_Reader is
       R.MaxVal := Max_Val;
       
       -- load the raster:
-      if Format = P1_FORMAT or else Format = P2_FORMAT then
+      if Format = P1_FORMAT then
+         PNM_Read_Bitmap_ASCII_Raster (File, R);
+      elsif Format = P2_FORMAT then
          PNM_Read_Grayscale_ASCII_Raster (File, R);
       elsif Format = P3_FORMAT then
          PNM_Read_Color_ASCII_Raster (File, R);
