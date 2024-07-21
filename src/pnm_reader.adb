@@ -199,7 +199,9 @@ package body PNM_Reader is
             raise FORMAT_ERROR with
               "unrecognised format " & PNM_Format'Image;
       end case;
-      Skip_Line (File); -- skip to the end to permit reading of the the next raster.
+      if PNM_Format < P4_FORMAT then
+         Skip_Line (File); -- skip to the end to permit reading of the the next raster.
+      end if;
    end;
    
    function Get_Image_Format (Magic : String) return PNM_Format_Type
