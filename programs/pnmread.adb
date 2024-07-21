@@ -32,10 +32,8 @@ begin
             Put (" ");
             Put (Image.Raster.N, 0);
             New_Line;
-            if Image.Format /= P1_FORMAT and then IMage.Format /= P4_Format then
-               Put (Image.MaxVal, 0);
-               New_Line;
-            end if;
+            Put (Image.MaxVal, 0);
+            New_Line;
          
             Log_Max := Log (Float (Image.MaxVal), Base => 10.0);
             N_Digits := Integer (Log_Max) + 1;
