@@ -21,29 +21,34 @@ begin
          Image : PNM_Image_Type;
          Log_Max : Float;
          N_Digits : Integer;
+         Input_File : File_Type;
       begin
-         Load_Raster (Argument (I), Image);
-         Put_Line ("P2");
-         Put_Line ("# " & Image.Format'Image (1 .. 2));
-         Put (Image.Raster.M, 0);
-         Put (" ");
-         Put (Image.Raster.N, 0);
-         New_Line;
-         if Image.Format /= P1_FORMAT and then IMage.Format /= P4_Format then
-            Put (Image.MaxVal, 0);
+         Open (Input_File, In_File, Ada.Command_Line.Argument (I));
+         while not End_Of_File (Input_File) loop
+            Load_Raster (Input_File, Image);
+            Put_Line ("P2");
+            Put_Line ("# " & Image.Format'Image (1 .. 2));
+            Put (Image.Raster.M, 0);
+            Put (" ");
+            Put (Image.Raster.N, 0);
             New_Line;
-         end if;
+            if Image.Format /= P1_FORMAT and then IMage.Format /= P4_Format then
+               Put (Image.MaxVal, 0);
+               New_Line;
+            end if;
          
-         Log_Max := Log (Float (Image.MaxVal), Base => 10.0);
-         N_Digits := Integer (Log_Max) + 1;
-         -- Put_Line (">>> " & N_Digits'Image);
+            Log_Max := Log (Float (Image.MaxVal), Base => 10.0);
+            N_Digits := Integer (Log_Max) + 1;
+            -- Put_Line (">>> " & N_Digits'Image);
 
-         for I in Image.Raster.Pixels'Range (1) loop
-            for J in Image.Raster.Pixels'Range (2) loop
-               Put (Integer (Image.Raster.Pixels (I, J)), N_Digits + 1);
+            for I in Image.Raster.Pixels'Range (1) loop
+               for J in Image.Raster.Pixels'Range (2) loop
+                  Put (Integer (Image.Raster.Pixels (I, J)), N_Digits + 1);
+               end loop;
+               New_Line;
             end loop;
-            New_Line;
          end loop;
+         Close (Input_File);
       end;      
       if I < Argument_Count then
          New_Line;
