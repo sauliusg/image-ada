@@ -111,7 +111,10 @@ package body PNM_Reader is
    begin
       for I in R.Raster.Pixels'Range (1) loop
          for J in R.Raster.Pixels'Range (2) loop
-            Get (File, Value);
+            loop
+               Get (File, Value);
+               exit when Value /= ' ';
+            end loop;
             R.Raster.Pixels (I, J) := (if Value = '0' then 0 else 1);
          end loop;
       end loop;
