@@ -64,6 +64,46 @@ package body PNM_Reader is
       return Value;
    end;
    
+   procedure PNM_Read_Bitmap_Binary_Raster
+     (
+      File : in File_Type;
+      R : in out PNM_Image_Type
+     ) is
+      type Byte_Counter_Type is mod 2**3;
+      type Word is mod 2**16;
+      Dummy : Character;
+      Value : Character;
+      -- counter of the pixel bits use to determine when the next byte
+      -- must be read:
+      N : Byte_Counter_Type := 0;
+      B : Integer := 0;
+   begin
+      -- Get (File, Dummy);
+      for I in R.Raster.Pixels'Range (1) loop
+         B := B + 1;
+         -- Put_Line (">> Byte = " & B'Image);
+         -- New_Line;
+         Get (File, Value);
+         N := 1;
+         for J in R.Raster.Pixels'Range (2) loop
+            -- Put_Line (">>> N = " & N'Image);
+            if N = 0 then
+               B := B + 1;
+               -- New_Line;
+               -- Put_Line (">>> Byte = " & B'Image);
+               -- New_Line;
+               
+               Get (File, Value);
+            end if;
+            R.Raster.Pixels (I, J) := ((Character'Pos (Value) and 16#80#) / 16#80#) * Pixel_Type (Integer (N) + 1);
+            -- R.Raster.Pixels (I, J) := ((Character'Pos (Value) and 16#80#) / 16#80#);
+            Value := Character'Val ((Word (Character'Pos (Value) * 2) and 16#FF#));
+            N := N + 1;
+         end loop;
+         -- New_Line;
+      end loop;
+   end;
+   
    procedure PNM_Read_Grayscale_Binary_Raster
      (
       File : in File_Type;
@@ -196,6 +236,8 @@ package body PNM_Reader is
          PNM_Read_Grayscale_ASCII_Raster (File, R);
       elsif Format = P3_FORMAT then
          PNM_Read_Color_ASCII_Raster (File, R);
+      elsif Format = P4_FORMAT then
+         PNM_Read_Bitmap_Binary_Raster (File, R);
       elsif Format = P5_FORMAT then
          PNM_Read_Grayscale_Binary_Raster (File, Max_Val, R);
       elsif Format = P6_FORMAT then
