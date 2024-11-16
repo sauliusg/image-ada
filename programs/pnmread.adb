@@ -7,6 +7,7 @@ with PNM_Reader;
 
 procedure PNMRead is
    
+   -- subtype Pixel_Type16 is Short_Integer;
    type Pixel_Type16 is mod 2**16;
    
    package PNM_Reader16 is new PNM_Reader (Pixel_Type16);

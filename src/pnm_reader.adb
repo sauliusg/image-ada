@@ -84,8 +84,10 @@ package body PNM_Reader is
                Get (File, Value);
                N := 1;
             end if;
-            R.Raster.Pixels (I, J) := ((Character'Pos (Value) and 16#80#) / 16#80#);
-            Value := Character'Val ((Word (Character'Pos (Value) * 2) and 16#FF#));
+            R.Raster.Pixels (I, J) :=
+              Pixel_Type'Val ((Word (Character'Pos (Value)) and 16#80#) / 16#80#);
+            Value :=
+              Character'Val ((Word (Character'Pos (Value) * 2) and 16#FF#));
             N := N + 1;
          end loop;
       end loop;
@@ -104,7 +106,7 @@ package body PNM_Reader is
       for I in R.Raster.Pixels'Range (1) loop
          for J in R.Raster.Pixels'Range (2) loop
             Value := Get_Binary_Stream_Value (Input, Max_Val);
-            R.Raster.Pixels (I, J) := Pixel_Type (Value);
+            R.Raster.Pixels (I, J) := Pixel_Type'Val (Value);
          end loop;
       end loop;
    end;
@@ -124,7 +126,7 @@ package body PNM_Reader is
             R := Get_Binary_Stream_Value (Input, Max_Val);
             G := Get_Binary_Stream_Value (Input, Max_Val);
             B := Get_Binary_Stream_Value (Input, Max_Val);
-            Image.Raster.Pixels (I, J) := Pixel_Type ((R + G + B) / 3);
+            Image.Raster.Pixels (I, J) := Pixel_Type'Val ((R + G + B) / 3);
          end loop;
       end loop;
    end;
@@ -142,7 +144,7 @@ package body PNM_Reader is
                Get (File, Value);
                exit when Value /= ' ';
             end loop;
-            R.Raster.Pixels (I, J) := (if Value = '0' then 0 else 1);
+            R.Raster.Pixels (I, J) := Pixel_Type'Val (if Value = '0' then 0 else 1);
          end loop;
       end loop;
    end;
@@ -157,7 +159,7 @@ package body PNM_Reader is
       for I in R.Raster.Pixels'Range (1) loop
          for J in R.Raster.Pixels'Range (2) loop
             Get (File, Value);
-            R.Raster.Pixels (I, J) := Pixel_Type (Value);
+            R.Raster.Pixels (I, J) := Pixel_Type'Val (Value);
          end loop;
       end loop;
    end;
@@ -174,7 +176,7 @@ package body PNM_Reader is
             Get (File, R);
             Get (File, G);
             Get (File, B);
-            Image.Raster.Pixels (I, J) := Pixel_Type ((R + G + B) / 3);
+            Image.Raster.Pixels (I, J) := Pixel_Type'Val ((R + G + B) / 3);
          end loop;
       end loop;
    end;

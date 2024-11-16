@@ -2,7 +2,7 @@ with Text_IO;          use Text_IO;
 with Ada.Finalization; use Ada.Finalization;
 
 generic
-   type Pixel_Type is mod <>;
+   type Pixel_Type is (<>);
    
 package PNM_Reader is
    
