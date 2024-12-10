@@ -71,17 +71,18 @@ package body PNM_Reader is
      ) is
       type Byte_Counter_Type is new Short_Integer;
       type Word is mod 2**16;
+      Input : Stream_Access := Stream (File);
       Value : Character;
       -- counter of the pixel bits use to determine when the next byte
       -- must be read:
       N : Byte_Counter_Type := 0;
    begin
       for I in R.Raster.Pixels'Range (1) loop
-         Get (File, Value);
+         Character'Read (Input, Value);
          N := 1;
          for J in R.Raster.Pixels'Range (2) loop
             if N = 9 then
-               Get (File, Value);
+               Character'Read (Input, Value);
                N := 1;
             end if;
             R.Raster.Pixels (I, J) :=
