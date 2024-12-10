@@ -86,7 +86,7 @@ package body PNM_Reader is
                N := 1;
             end if;
             R.Raster.Pixels (I, J) :=
-              Pixel_Type'Val ((Word (Character'Pos (Value)) and 16#80#) / 16#80#);
+              Pixel_Type'Val (1 - (Word (Character'Pos (Value)) and 16#80#) / 16#80#);
             Value :=
               Character'Val ((Word (Character'Pos (Value) * 2) and 16#FF#));
             N := N + 1;
@@ -145,7 +145,7 @@ package body PNM_Reader is
                Get (File, Value);
                exit when Value /= ' ';
             end loop;
-            R.Raster.Pixels (I, J) := Pixel_Type'Val (if Value = '0' then 0 else 1);
+            R.Raster.Pixels (I, J) := Pixel_Type'Val (if Value = '0' then 1 else 0);
          end loop;
       end loop;
    end;
